@@ -18,18 +18,15 @@ import {
 import { useState, useEffect } from 'react';
 
 const IMAGES = [
-  "https://scontent-waw2-1.xx.fbcdn.net/v/t39.30808-6/494482465_1265600282237658_4910818142172882119_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=13d280&_nc_ohc=2ev1OQcIRMMQ7kNvwGGcZCB&_nc_oc=AdpaiVR2xY0_pyHcXDO8IDj1eOqvN1DrcoXkj0eAeF7xnr_zyMxqM6nS31PiLpae-6w&_nc_zt=23&_nc_ht=scontent-waw2-1.xx&_nc_gid=XB-u2Lo_8nBlUyR2zgoobw&_nc_ss=7b2a8&oh=00_Af0aKmrYdvRB2LssJI9rdGU6zlLo_wp6yLw5KRmytphVzA&oe=69F24250",
-  "https://scontent-waw2-2.xx.fbcdn.net/v/t39.30808-6/494710924_1265600272237659_4759303764915150474_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=13d280&_nc_ohc=B938HAzUciAQ7kNvwHQdJbv&_nc_oc=AdpHYgFEH8_CTAGAe5-Wspc-BbdCRNIc9cMR-5JgrpMqo2DGbRevBlrhgWr3Bt11Vsk&_nc_zt=23&_nc_ht=scontent-waw2-2.xx&_nc_gid=nWo5NUqgDxiEMI6FUCldhg&_nc_ss=7b2a8&oh=00_Af0X0M6nETxkhZXnwd2t1ZWgQNp9iNS9tNKXFyvY2D4kcQ&oe=69F23186",
-  "https://scontent-waw2-1.xx.fbcdn.net/v/t39.30808-6/493338003_1263417822455904_2762233224847189155_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=111&ccb=1-7&_nc_sid=13d280&_nc_ohc=C6vvFx1PkS4Q7kNvwFSFyVF&_nc_oc=Adr5-_bUqdGT_-NkCnpNmEFs3twIl45d7g0XNyQuDYwfChAh81AjDWpU20GCnjL29TY&_nc_zt=23&_nc_ht=scontent-waw2-1.xx&_nc_gid=Zw5cWnvqDFTXmKiSnXLuoQ&_nc_ss=7b2a8&oh=00_Af2jmptmw5xCEVwXSZFBfm3Ajxnye_-4aV3g3w9ukFsD6A&oe=69F2289F",
-  "https://scontent-waw2-1.xx.fbcdn.net/v/t39.30808-6/492472445_1263417845789235_7313535496876167545_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=104&ccb=1-7&_nc_sid=13d280&_nc_ohc=aAAjROuZSJQQ7kNvwFEpcNm&_nc_oc=AdrEET-7leV0ukylKEyURL4B04CEaYadxWXdlow1TNLQPDDdArs6OiO2hCXi1Q9KlDo&_nc_zt=23&_nc_ht=scontent-waw2-1.xx&_nc_gid=IfMZjXIo8X5_wHepTbKdxQ&oh=00_Af2ZpuxJxKvze-dRroZh3AtZRc_-qBJkLONSjuqxHoO2Vw&oe=69F2187B",
-  "https://scontent-waw2-1.xx.fbcdn.net/v/t39.30808-6/493994846_1262536265877393_8563727255817413147_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=110&ccb=1-7&_nc_sid=13d280&_nc_ohc=HRnvcN0JuyEQ7kNvwH1TFy1&_nc_oc=Ado15Dfu_cfKMitCg1JgKpApqGO7-BOtC0FMO3DOCkup1S8gk-vjzG-EqXZdiAv1Zu8&_nc_zt=23&_nc_ht=scontent-waw2-1.xx&_nc_gid=OZhQJhHIYDERdDLBQipBfA&_nc_ss=7b2a8&oh=00_Af2gvsbjLZfdh2wR_ElUUPRvUshv2hdqL_Q3ca4hZd0nsw&oe=69F227DC",
-  "https://scontent-waw2-2.xx.fbcdn.net/v/t39.30808-6/493729166_1262536212544065_3927221598496048940_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=102&ccb=1-7&_nc_sid=13d280&_nc_ohc=7BQ1ANiOSuAQ7kNvwFNp0ew&_nc_oc=AdoJr4VqZ0gn54H6aRpMPQfYXF6M4Y3PRkDr8CRFV6y4XiE2qqe328bbUOjzxBKagI0&_nc_zt=23&_nc_ht=scontent-waw2-2.xx&_nc_gid=FKLrXcKsTu5selxigr8mNQ&_nc_ss=7b2a8&oh=00_Af1amA-wK-TPbMbZ4L-ZuNh55UNGlDUYSD-8bgB9TBXUZQ&oe=69F21E12",
-  "https://scontent-waw2-2.xx.fbcdn.net/v/t39.30808-6/494108294_1262536185877401_3150602816104922614_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=101&ccb=1-7&_nc_sid=13d280&_nc_ohc=emoTNA-z-coQ7kNvwF2sZa-&_nc_oc=AdpnXL6Qd4dyyLIBCpga0ou7YM-D56bXqdl6__lYa0FacVcBoAHUb5M0Rw18nuBIWsw&_nc_zt=23&_nc_ht=scontent-waw2-2.xx&_nc_gid=dwGe7F35DGsj9g5wDz_Ung&_nc_ss=7b2a8&oh=00_Af3rqyaXbNNPXIzRm-uabEqRm7hW6z_b0dynjFjUjDborA&oe=69F229CF",
-  "https://scontent-waw2-2.xx.fbcdn.net/v/t39.30808-6/492936302_1262536179210735_2661544604999763810_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=102&ccb=1-7&_nc_sid=13d280&_nc_ohc=WANQgJccc7cQ7kNvwFivdVb&_nc_oc=AdrDEX0yaQ91gMXHFZsIlzQzmKq1ITnAFUrJrSKr3fpPO1_mBUtLiblSlu_WDHlO6pg&_nc_zt=23&_nc_ht=scontent-waw2-2.xx&_nc_gid=ygbHgi9dnCIfbverPJnEJA&_nc_ss=7b2a8&oh=00_Af09HUJmxh70dyhbWRwlk_LPXFDonbDggPxY914EJX5m7w&oe=69F22339",
-  "https://scontent-waw2-1.xx.fbcdn.net/v/t39.30808-6/493998012_1262536142544072_7576016324617655876_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=104&ccb=1-7&_nc_sid=13d280&_nc_ohc=m56JXwKhv-cQ7kNvwFIjbS4&_nc_oc=AdprpSuXDsZ_HfHOkdtFcT5HURiu2YdMGCNBuh3byAggrt0h4NJ0SmvDggARK-mXC2E&_nc_zt=23&_nc_ht=scontent-waw2-1.xx&_nc_gid=z7hQuTIQ1-bHBgguTazDow&_nc_ss=7b2a8&oh=00_Af18T4d_XXo5GZHjqJxHGf1b75h1w8A6m-1FhL9fe1WS6A&oe=69F21649",
+  "https://i.ibb.co/ZRnFm2Wy/494213384-1265600152237671-3711941915852840053-n.jpg",
+  "https://i.ibb.co/VGmCBx4/491367713-1260876702710016-7368715875963203843-n.jpg",
+  "https://i.ibb.co/v4N3wrgM/493998012-1262536142544072-7576016324617655876-n.jpg",
+  "https://i.ibb.co/1Y6VbPHN/492936302-1262536179210735-2661544604999763810-n.jpg",
+  "https://i.ibb.co/wN12qz3N/493087667-1262536169210736-4721242549837587056-n.jpg",
+  "https://i.ibb.co/B52rSLj7/494108294-1262536185877401-3150602816104922614-n.jpg",
 ];
 
-const LOGO = "https://scontent-waw2-2.xx.fbcdn.net/v/t39.30808-6/458318429_1068413095289712_2435864125055337775_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=1d70fc&_nc_ohc=dqazfIlQ6VgQ7kNvwGsbRhY&_nc_oc=AdrAvj4r54yaSpPT4ZwZUwZndQXk1xPeQCRGpm_CtXgdIjNXwAE4616LDi6ySJT-Yn4&_nc_zt=23&_nc_ht=scontent-waw2-2.xx&_nc_gid=yQb6eEhxOqJtFWUG8QwbcA&_nc_ss=7b2a8&oh=00_Af3UvIXKwQppfk9R2niePFcZy5bmkUyX2B1G88HU10k1iA&oe=69F210C0";
+const LOGO = "https://i.ibb.co/Q31kWLJn/458318429-1068413095289712-2435864125055337775-n.jpg";
 
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
