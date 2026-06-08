@@ -1,0 +1,12 @@
+content:
+  - name: homepage
+    label: Homepage
+    type: file
+    path: index.html   # Points directly to your homepage file
+    fields:
+      - name: title
+        label: Main Heading
+        type: string
+      - name: description
+        label: Paragraph Text
+        type: rich-text
