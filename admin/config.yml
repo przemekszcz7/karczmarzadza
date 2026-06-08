@@ -1,0 +1,17 @@
+backend:
+  name: github
+  repo: przemekszcz7/karczmarzadza
+  branch: main # Change to 'gh-pages' if that's the branch you deploy from
+
+
+collections:
+  - name: "pages"
+    label: "Strony (Pages)"
+    files:
+      - file: "index.html"
+        label: "Strona Główna (Homepage)"
+        name: "index"
+        fields:
+          - { label: "Tytuł Strony", name: "title", widget: "string" }
+          - { label: "Główny Nagłówek", name: "hero_heading", widget: "string" }
+          - { label: "Opis / Tekst", name: "hero_text", widget: "markdown" }
