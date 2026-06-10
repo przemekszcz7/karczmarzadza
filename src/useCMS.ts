@@ -3,6 +3,8 @@ import { CMSContent, DEFAULT_CONTENT } from './types';
 
 export function useCMS() {
   const [content, setContent] = useState<CMSContent>(DEFAULT_CONTENT);
+  // Add an explicitly tracked loading indicator state
+  const [isLoading, setIsLoading] = useState(true);
 
   const getPath = (pathString: string) => {
     if (!pathString) return '';
@@ -17,26 +19,36 @@ export function useCMS() {
 
     fetch(jsonPath)
       .then((res) => {
-        if (!res.ok) throw new Error("CMS JSON data fallback");
+        if (!res.ok) throw new Error("CMS JSON fallback");
         return res.json();
       })
       .then((data) => {
         setContent({
           logo: data.logo || DEFAULT_CONTENT.logo,
-          hero_image: data.hero_section?.hero_image || DEFAULT_CONTENT.hero_image,
-          hero_title: data.hero_section?.hero_title || DEFAULT_CONTENT.hero_title,
-          hero_subtitle: data.hero_section?.hero_subtitle || DEFAULT_CONTENT.hero_subtitle,
-          hero_description: data.hero_section?.hero_description || DEFAULT_CONTENT.hero_description,
-          about_image: data.about_section?.about_image || DEFAULT_CONTENT.about_image,
-          about_title: data.about_section?.about_title || DEFAULT_CONTENT.about_title,
-          about_description: data.about_section?.about_description || DEFAULT_CONTENT.about_description,
-          gallery_images: data.gallery_section?.gallery_images && Array.isArray(data.gallery_section.gallery_images)
-            ? data.gallery_section.gallery_images.map((item: any) => typeof item === 'object' ? item.image : item)
-            : DEFAULT_CONTENT.gallery_images
+          hero_section: {
+            hero_image: data.hero_section?.hero_image || DEFAULT_CONTENT.hero_image,
+            hero_title: data.hero_section?.hero_title || DEFAULT_CONTENT.hero_title,
+            hero_subtitle: data.hero_section?.hero_subtitle || DEFAULT_CONTENT.hero_subtitle,
+            hero_description: data.hero_section?.hero_description || DEFAULT_CONTENT.hero_description,
+          },
+          about_section: {
+            about_image: data.about_section?.about_image || DEFAULT_CONTENT.about_image,
+            about_title: data.about_section?.about_title || DEFAULT_CONTENT.about_title,
+            about_description: data.about_section?.about_description || DEFAULT_CONTENT.about_description,
+          },
+          gallery_section: {
+            gallery_images: data.gallery_section?.gallery_images && Array.isArray(data.gallery_section.gallery_images)
+              ? data.gallery_section.gallery_images.map((item: any) => typeof item === 'object' ? item.image : item)
+              : DEFAULT_CONTENT.gallery_images
+          }
         });
+        setIsLoading(false); // Data is ready!
       })
-      .catch((err) => console.warn("Using defaults:", err));
+      .catch((err) => {
+        console.warn("Using defaults:", err);
+        setIsLoading(false); // Disables blocker even if network completely fails
+      });
   }, []);
 
-  return { content, getPath };
+  return { content, getPath, isLoading };
 }
