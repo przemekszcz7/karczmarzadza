@@ -17,23 +17,16 @@ import {
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
-const base = import.meta.env.BASE_URL || '/';
-const getImagePath = (path: string) => {
-  const cleanBase = base.endsWith('/') ? base : `${base}/`;
-  const cleanPath = path.startsWith('/') ? path.slice(1) : path;
-  return `${cleanBase}${cleanPath}`;
-};
-
 const IMAGES = [
-  getImagePath('images/gallery1.jpg'),
-  getImagePath('images/gallery2.jpg'),
-  getImagePath('images/gallery3.jpg'),
-  getImagePath('images/gallery4.jpg'),
-  getImagePath('images/gallery5.jpg'),
-  getImagePath('images/gallery6.jpg'),
+  "https://i.ibb.co/ZRnFm2Wy/494213384-1265600152237671-3711941915852840053-n.jpg",
+  "https://i.ibb.co/VGmCBx4/491367713-1260876702710016-7368715875963203843-n.jpg",
+  "https://i.ibb.co/v4N3wrgM/493998012-1262536142544072-7576016324617655876-n.jpg",
+  "https://i.ibb.co/1Y6VbPHN/492936302-1262536179210735-2661544604999763810-n.jpg",
+  "https://i.ibb.co/wN12qz3N/493087667-1262536169210736-4721242549837587056-n.jpg",
+  "https://i.ibb.co/B52rSLj7/494108294-1262536185877401-3150602816104922614-n.jpg",
 ];
 
-const LOGO = getImagePath('images/logo.jpg');
+const LOGO = "https://i.ibb.co/Q31kWLJn/458318429-1068413095289712-2435864125055337775-n.jpg";
 
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
