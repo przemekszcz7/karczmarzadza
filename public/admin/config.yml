@@ -1,4 +1,3 @@
-# Use DecapBridge PKCE auth (required)
 backend:
   name: git-gateway
   repo: przemekszcz7/karczmarzadza
@@ -9,18 +8,16 @@ backend:
   auth_token_endpoint: /sites/548343dc-abfa-4d33-9b7b-983d6b7774e7/token
   gateway_url: https://gateway.decapbridge.com
 
-# Media paths calibrated for Vite asset pipeline
 media_folder: "public/images"
 public_folder: "/images"
 
-# Logo and site adjustments
-logo_url: https://decapbridge.com/decapcms-with-bridge.svg
-site_url: https://karczmarzadzarustykalnasalabankietowa.pl
+logo_url: "https://decapbridge.com/decapcms-with-bridge.svg"
+site_url: "https://karczmarzadzarustykalnasalabankietowa.pl"
 
 collections:
   - name: "content"
     label: "Edycja Strony"
-    delete: false # Prevents accidental file deletion
+    delete: false
     files:
       - file: "public/content/homepage.json"
         label: "Strona Główna (Homepage)"
@@ -49,7 +46,7 @@ collections:
             name: "gallery_section"
             widget: "object"
             fields:
-              - label: "Zdjęcia w Galerii (Wymagane dokładnie 4 zdjęcia)"
-                name: "gallery_images",
-                widget: "list",
+              - label: "Zdjęcia w Galerii"
+                name: "gallery_images"
+                widget: "list"
                 field: { label: "Zdjęcie", widget: "image" }
