@@ -9,4 +9,28 @@
 <body>
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
 </body>
+  <script>
+  // Define a custom template layout for your "homepage" file collection
+  var HomepagePreview = createClass({
+    render: function() {
+      // Pull live data straight out of the editing text input fields
+      var entry = this.props.entry;
+      var heroTitle = entry.getIn(['data', 'hero_section', 'hero_title']);
+      var heroSubtitle = entry.getIn(['data', 'hero_section', 'hero_subtitle']);
+      var heroDescription = entry.getIn(['data', 'hero_section', 'hero_description']);
+
+      // Render the mock visual layout exactly how it shows on your frontend
+      return h('div', { className: 'min-h-screen bg-paper text-wood-dark font-sans' },
+        h('section', { className: 'relative p-12 text-center bg-stone-tan/20 border-b' },
+          h('h1', { style: { fontSize: '3rem', fontFamily: 'serif', fontStyle: 'italic' } }, heroTitle),
+          h('h2', { style: { fontSize: '1.5rem', marginTop: '10px' } }, heroSubtitle),
+          h('p', { style: { marginTop: '20px', maxWidth: '600px', marginInline: 'auto' } }, heroDescription)
+        )
+      );
+    }
+  });
+
+  // Register this preview component to your 'homepage' settings file entry block
+  CMS.registerPreviewTemplate("homepage", HomepagePreview);
+</script>
 </html>
