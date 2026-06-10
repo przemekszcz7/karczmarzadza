@@ -49,4 +49,4 @@ collections:
               - label: "Zdjęcia w Galerii"
                 name: "gallery_images"
                 widget: "list"
-                field: { label: "Zdjęcie", widget: "image" }
+                field: { label: "Zdjęcie", name: "image", widget: "image" }
