@@ -107,32 +107,3 @@ export default function App() {
               className="w-12 h-12 rounded-full border-2 border-wood-accent group-hover:scale-105 transition-transform"
             />
             <div className="flex flex-col">
-              <span className={`text-xl font-serif font-bold uppercase tracking-tight leading-none transition-colors ${
-                scrolled ? 'text-wood-dark' : 'text-white drop-shadow-md'
-              }`}>
-                Karczma Rządza
-              </span>
-              <span className={`text-[10px] font-sans uppercase tracking-[0.2em] italic font-bold mt-1 transition-colors ${
-                scrolled ? 'text-wood-accent' : 'text-white/80'
-              }`}>
-                Rustykalna Sala Bankietowa
-              </span>
-            </div>
-          </a>
-
-          <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <a 
-                key={link.name}
-                href={link.href}
-                className={`text-[11px] font-bold uppercase tracking-[0.2em] hover:text-wood-accent transition-colors ${
-                  scrolled ? 'text-wood-dark' : 'text-white'
-                }`}
-              >
-                {link.name}
-              </a>
-            ))}
-            <a 
-              href="https://www.facebook.com/KarczmaRzadzaRustykalnaSalaBankietowa" 
-              target="_blank" 
-              rel="noopener noreferrer
