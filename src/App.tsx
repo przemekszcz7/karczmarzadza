@@ -17,24 +17,23 @@ import {
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
-import gallery1 from './images/gallery1.jpg';
-import gallery2 from './images/gallery2.jpg';
-import gallery3 from './images/gallery3.jpg';
-import gallery4 from './images/gallery4.jpg';
-import gallery5 from './images/gallery5.jpg';
-import gallery6 from './images/gallery6.jpg';
-import logoImg from './images/logo.jpg';
+const base = import.meta.env.BASE_URL || '/';
+const getImagePath = (path: string) => {
+  const cleanBase = base.endsWith('/') ? base : `${base}/`;
+  const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+  return `${cleanBase}${cleanPath}`;
+};
 
 const IMAGES = [
-  gallery1,
-  gallery2,
-  gallery3,
-  gallery4,
-  gallery5,
-  gallery6,
+  getImagePath('images/gallery1.jpg'),
+  getImagePath('images/gallery2.jpg'),
+  getImagePath('images/gallery3.jpg'),
+  getImagePath('images/gallery4.jpg'),
+  getImagePath('images/gallery5.jpg'),
+  getImagePath('images/gallery6.jpg'),
 ];
 
-const LOGO = logoImg;
+const LOGO = getImagePath('images/logo.jpg');
 
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
