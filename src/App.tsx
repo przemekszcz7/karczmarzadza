@@ -12,37 +12,72 @@ import {
   Star, 
   ChevronRight, 
   Menu, 
-  X,
-  ExternalLink
+  X
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
-const IMAGES = [
-  "/images/1.jpg",       // Replaces the old 494213384... link
-  "/images/2.jpg",   // Replaces the old 491367713... link
-  "/images/3.jpg",    // Replaces the old 493998012... link
-  "/images/4.jpg",    // Replaces the old 492936302... link
-  "/images/5.jpg",    // Replaces the old 493087667... link
-  "/images/6.jpg",    // Replaces the old 494108294... link
-];
-
-const LOGO = "/images/logo.jpg";
+// Default Fallbacks matching your original rustic content configuration
+const DEFAULT_CONTENT = {
+  logo: "/images/logo.jpg",
+  hero_image: "/images/1.jpg",
+  hero_title: "Twój Wyjątkowy Dzień",
+  hero_subtitle: "W Rustykalnym Stylu",
+  hero_description: "Odkryj miejsce, gdzie tradycja spotyka się z elegancją. Zapraszamy do Karczmy Rządza.",
+  about_image: "/images/2.jpg",
+  about_title: "Tradycja spotyka elegancję...",
+  about_description: "Nasza karczma to połączenie sielskiego klimatu z profesjonalną obsługą bankietową. Drewniane wnętrza, regionalna kuchnia i malownicza okolica nad rzeką Rządzą stworzą niezapomnianą atmosferę dla Państwa uroczystości.",
+  gallery_images: [
+    "/images/3.jpg",
+    "/images/4.jpg",
+    "/images/5.jpg",
+    "/images/6.jpg"
+  ]
+};
 
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [content, setContent] = useState(DEFAULT_CONTENT);
+
+  // Dynamic Runtime Asset Resolution mapping to Vite or Subdirectories
+  const getPath = (pathString: string) => {
+    const clean = pathString.startsWith('/') ? pathString.slice(1) : pathString;
+    const baseUrl = import.meta.env.BASE_URL || '/';
+    return `${baseUrl}${baseUrl.endsWith('/') ? '' : '/'}${clean}`;
+  };
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
+
+    // Fetch dynamic JSON written by Decap CMS at runtime
+    fetch(`${import.meta.env.BASE_URL || '/'}content/homepage.json`)
+      .then((res) => {
+        if (!res.ok) throw new Error("No dynamic content configuration JSON found");
+        return res.json();
+      })
+      .then((data) => {
+        setContent({
+          logo: data.logo || DEFAULT_CONTENT.logo,
+          hero_image: data.hero_image || DEFAULT_CONTENT.hero_image,
+          hero_title: data.hero_title || DEFAULT_CONTENT.hero_title,
+          hero_subtitle: data.hero_subtitle || DEFAULT_CONTENT.hero_subtitle,
+          hero_description: data.hero_description || DEFAULT_CONTENT.hero_description,
+          about_image: data.about_image || DEFAULT_CONTENT.about_image,
+          about_title: data.about_title || DEFAULT_CONTENT.about_title,
+          about_description: data.about_description || DEFAULT_CONTENT.about_description,
+          gallery_images: Array.isArray(data.gallery_images) ? data.gallery_images : DEFAULT_CONTENT.gallery_images
+        });
+      })
+      .catch((err) => console.log("Using static content defaults:", err));
+
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const navLinks = [
     { name: 'O nas', href: '#o-nas' },
     { name: 'Galeria', href: '#galeria' },
-    { name: 'Nasze Sale', href: '#sale' },
     { name: 'Opinie', href: '#opinie' },
     { name: 'Kontakt', href: '#kontakt' },
   ];
@@ -58,9 +93,9 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
           <a href="#" className="flex items-center gap-4 group">
             <img 
-              src={LOGO} 
-              alt="Logo Karczma Rządza" 
-              className={`w-12 h-12 rounded-full border-2 border-wood-accent group-hover:scale-105 transition-transform`}
+              src={getPath(content.logo)} 
+              alt="Logo" 
+              className="w-12 h-12 rounded-full border-2 border-wood-accent group-hover:scale-105 transition-transform"
             />
             <div className="flex flex-col">
               <span className={`text-xl font-serif font-bold uppercase tracking-tight leading-none transition-colors ${
@@ -76,7 +111,6 @@ export default function App() {
             </div>
           </a>
 
-          {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
               <a 
@@ -101,7 +135,6 @@ export default function App() {
             </a>
           </div>
 
-          {/* Mobile Menu Toggle */}
           <button 
             className={`md:hidden p-2 transition-colors ${
               scrolled ? 'text-wood-dark' : 'text-white'
@@ -151,65 +184,28 @@ export default function App() {
         <section className="relative h-[90vh] flex items-center justify-center overflow-hidden">
           <div className="absolute inset-0 z-0">
             <img 
-              src={IMAGES[0]} 
+              src={getPath(content.hero_image)} 
               className="w-full h-full object-cover scale-105 animate-subtle-zoom" 
-              alt="Rustykalna sala bankietowa"
+              alt="Hero Theme"
             />
             <div className="absolute inset-0 bg-[#2C1810]/40" />
           </div>
           
-          <motion.div 
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-            className="relative z-10 text-center px-6"
-          >
-            <motion.h1 
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1.2, delay: 0.2 }}
-              className="text-5xl md:text-8xl text-white font-serif mb-6 drop-shadow-2xl font-bold italic leading-tight"
-            >
-              Twój Wyjątkowy Dzień <br /> 
-              <span className="font-light not-italic text-4xl md:text-6xl block mt-4 tracking-tight">W Rustykalnym Stylu</span>
-            </motion.h1>
-            <motion.p 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.8 }}
-              className="text-white/90 text-lg md:text-xl max-w-xl mx-auto mb-10 font-sans font-light tracking-wide"
-            >
-              Odkryj miejsce, gdzie tradycja spotyka się z elegancją. <br className="hidden md:block" /> Zapraszamy do Karczmy Rządza.
-            </motion.p>
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1.2 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center"
-            >
-              <a 
-                href="#kontakt" 
-                className="bg-wood-accent text-white px-10 py-4 rounded shadow-xl font-bold uppercase tracking-widest text-xs hover:bg-opacity-90 transition-all hover:scale-105 active:scale-95"
-              >
+          <motion.div className="relative z-10 text-center px-6">
+            <h1 className="text-5xl md:text-8xl text-white font-serif mb-6 drop-shadow-2xl font-bold italic leading-tight">
+              {content.hero_title} <br /> 
+              <span className="font-light not-italic text-4xl md:text-6xl block mt-4 tracking-tight">{content.hero_subtitle}</span>
+            </h1>
+            <p className="text-white/90 text-lg md:text-xl max-w-xl mx-auto mb-10 font-sans font-light tracking-wide">
+              {content.hero_description}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <a href="#kontakt" className="bg-wood-accent text-white px-10 py-4 rounded shadow-xl font-bold uppercase tracking-widest text-xs hover:bg-opacity-90 transition-all">
                 Rezerwuj Termin
               </a>
-              <a 
-                href="#galeria" 
-                className="bg-white/10 backdrop-blur-md text-white border border-white/30 px-10 py-4 rounded font-bold uppercase tracking-widest text-xs hover:bg-white/20 transition-all hover:scale-105 active:scale-95"
-              >
+              <a href="#galeria" className="bg-white/10 backdrop-blur-md text-white border border-white/30 px-10 py-4 rounded font-bold uppercase tracking-widest text-xs hover:bg-white/20 transition-all">
                 Zobacz Galerię
               </a>
-            </motion.div>
-          </motion.div>
-          
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.6 }}
-            transition={{ delay: 2, duration: 1 }}
-            className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce"
-          >
-            <div className="w-1 h-12 bg-white/30 rounded-full flex justify-center">
-              <div className="w-1 h-4 bg-white rounded-full mt-2" />
             </div>
           </motion.div>
         </section>
@@ -222,165 +218,92 @@ export default function App() {
               { icon: Phone, title: "Kontakt", text: "+48 504 543 330" },
               { icon: Mail, title: "E-mail", text: "lazurr44@wp.pl" },
             ].map((item, idx) => (
-              <motion.div 
-                key={idx}
-                initial={{ opacity: 0, x: idx === 0 ? -50 : idx === 2 ? 50 : 0, y: 30 }}
-                whileInView={{ opacity: 1, x: 0, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.8, delay: idx * 0.2, ease: "easeOut" }}
-                whileHover={{ y: -10 }}
-                className="bg-white p-12 rounded-xl border border-stone-tan elegant-shadow text-center flex flex-col items-center group transition-all"
-              >
-                <motion.div 
-                  whileHover={{ rotate: 15, scale: 1.1 }}
-                  className="w-14 h-14 border border-stone-tan rounded-full flex items-center justify-center text-wood-accent mb-6"
-                >
+              <div key={idx} className="bg-white p-12 rounded-xl border border-stone-tan elegant-shadow text-center flex flex-col items-center">
+                <div className="w-14 h-14 border border-stone-tan rounded-full flex items-center justify-center text-wood-accent mb-6">
                   <item.icon size={24} />
-                </motion.div>
+                </div>
                 <h3 className="text-[10px] font-sans uppercase tracking-[0.2em] font-bold text-wood-accent mb-2">{item.title}</h3>
                 <p className="text-xl font-serif text-wood-dark">{item.text}</p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </section>
 
-        {/* About Section - Design Motif */}
+        {/* About Section */}
         <section id="o-nas" className="py-24 bg-white overflow-hidden">
           <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center gap-16">
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.9, x: -60 }}
-              whileInView={{ opacity: 1, scale: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1, ease: "circOut" }}
-              className="w-full md:w-1/2 relative"
-            >
+            <div className="w-full md:w-1/2 relative">
               <img 
-                src={IMAGES[1]} 
-                className="w-full h-[450px] object-cover rounded-2xl shadow-2xl cursor-zoom-in group" 
-                alt="Wnętrze Karczmy"
-                onClick={() => setSelectedImage(IMAGES[1])}
+                src={getPath(content.about_image)} 
+                className="w-full h-[450px] object-cover rounded-2xl shadow-2xl cursor-zoom-in" 
+                alt="Karczma"
+                onClick={() => setSelectedImage(getPath(content.about_image))}
               />
-              <motion.div 
-                initial={{ opacity: 0, rotate: 10, scale: 0.8 }}
-                whileInView={{ opacity: 1, rotate: 0, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.6, duration: 0.8 }}
-                className="absolute -bottom-6 -right-6 bg-wood-accent text-white p-8 rounded-lg shadow-xl max-w-[240px]"
-              >
+              <div className="absolute -bottom-6 -right-6 bg-wood-accent text-white p-8 rounded-lg shadow-xl max-w-[240px]">
                 <p className="text-[10px] uppercase tracking-widest opacity-80 mb-2 font-bold">Zapraszamy</p>
                 <p className="text-2xl leading-tight font-serif italic">Idealne miejsce na Twoje przyjęcie</p>
-              </motion.div>
-            </motion.div>
-            <motion.div 
-              initial={{ opacity: 0, x: 60 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1, delay: 0.2 }}
-              className="w-full md:w-1/2 space-y-8"
-            >
-              <h2 className="text-5xl font-serif text-wood-dark italic">Tradycja spotyka elegancję...</h2>
-              <motion.p 
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.6 }}
-                className="text-dusty-text leading-relaxed text-lg font-sans opacity-90"
-              >
-                Nasza karczma to połączenie sielskiego klimatu z profesjonalną obsługą bankietową. 
-                Drewniane wnętrza, regionalna kuchnia i malownicza okolica nad rzeką Rządzą stworzą 
-                niezapomnianą atmosferę dla Państwa uroczystości.
-              </motion.p>
-              <div className="pt-4">
-                <motion.a 
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  href="https://www.facebook.com/KarczmaRzadzaRustykalnaSalaBankietowa/reviews/?id=100063630937455&sk=reviews" 
-                  className="border-2 border-wood-accent text-wood-accent font-bold px-8 py-3 rounded-full text-xs uppercase tracking-widest hover:bg-wood-accent hover:text-white transition-all inline-block shadow-lg hover:shadow-wood-accent/20"
-                >
-                  Zobacz Opinie Naszych Gości
-                </motion.a>
               </div>
-            </motion.div>
+            </div>
+            <div className="w-full md:w-1/2 space-y-8">
+              <h2 className="text-5xl font-serif text-wood-dark italic">{content.about_title}</h2>
+              <p className="text-dusty-text leading-relaxed text-lg font-sans opacity-90">
+                {content.about_description}
+              </p>
+              <div className="pt-4">
+                <a href="https://www.facebook.com/KarczmaRzadzaRustykalnaSalaBankietowa/reviews" className="border-2 border-wood-accent text-wood-accent font-bold px-8 py-3 rounded-full text-xs uppercase tracking-widest hover:bg-wood-accent hover:text-white transition-all inline-block shadow-lg">
+                  Zobacz Opinie Naszych Gości
+                </a>
+              </div>
+            </div>
           </div>
         </section>
 
         {/* Gallery Section */}
         <section id="galeria" className="py-24 bg-paper border-y border-stone-tan">
           <div className="max-w-7xl mx-auto px-6">
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-center mb-16"
-            >
+            <div className="text-center mb-16">
               <span className="text-[10px] uppercase font-bold tracking-[0.3em] text-wood-accent mb-4 block">Inspiracje</span>
               <h2 className="text-5xl md:text-6xl text-wood-dark font-serif font-bold italic">Galeria Detali</h2>
-            </motion.div>
+            </div>
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              {IMAGES.slice(2, 6).map((img, idx) => (
-                <motion.div
+              {content.gallery_images.map((img, idx) => (
+                <div
                   key={idx}
-                  initial={{ opacity: 0, scale: 0.8, y: 40 }}
-                  whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: idx * 0.1, duration: 0.6 }}
                   className="relative overflow-hidden rounded-lg aspect-square border border-stone-tan bg-white shadow-sm group cursor-zoom-in"
-                  onClick={() => setSelectedImage(img)}
-                  whileHover={{ y: -8 }}
+                  onClick={() => setSelectedImage(getPath(img))}
                 >
                   <img 
-                    src={img} 
+                    src={getPath(img)} 
                     alt={`Galeria ${idx + 1}`} 
                     className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-wood-dark/0 group-hover:bg-wood-dark/10 transition-colors" />
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Reviews Call to Action */}
+        {/* Reviews */}
         <section id="opinie" className="py-24 bg-wood-dark text-paper wood-texture relative z-10 border-b border-stone-tan/20">
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1 }}
-            className="max-w-4xl mx-auto px-6 text-center"
-          >
+          <div className="max-w-4xl mx-auto px-6 text-center">
             <div className="flex gap-1 text-wood-accent justify-center mb-8">
               {[1, 2, 3, 4, 5].map((s) => (
-                <motion.div
-                  key={s}
-                  initial={{ opacity: 0, rotate: -45 }}
-                  whileInView={{ opacity: 1, rotate: 0 }}
-                  transition={{ delay: 0.2 + s * 0.1 }}
-                  viewport={{ once: true }}
-                >
-                  <Star fill="currentColor" size={24} />
-                </motion.div>
+                <Star key={s} fill="currentColor" size={24} />
               ))}
             </div>
             <h2 className="text-4xl md:text-6xl font-serif italic mb-8">"Miejsce z duszą i pasją"</h2>
             <p className="text-xl text-stone-tan/80 leading-relaxed font-light italic mb-12">
               Każde wydarzenie w Karczmie Rządza to dla nas nowa historia. Jesteśmy wdzięczni za zaufanie, którym nas obdarzacie, pozwalając nam być częścią Waszych najważniejszych chwil.
             </p>
-            <motion.a 
-              whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(255, 255, 255, 0.1)" }}
-              whileTap={{ scale: 0.95 }}
-              href="https://www.facebook.com/KarczmaRzadzaRustykalnaSalaBankietowa/reviews/?id=100063630937455&sk=reviews"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-paper text-wood-dark px-10 py-5 rounded shadow-2xl font-bold uppercase tracking-[0.2em] text-xs hover:bg-white transition-all inline-block"
-            >
+            <a href="https://www.facebook.com/KarczmaRzadzaRustykalnaSalaBankietowa/reviews" target="_blank" rel="noopener noreferrer" className="bg-paper text-wood-dark px-10 py-5 rounded shadow-2xl font-bold uppercase tracking-[0.2em] text-xs hover:bg-white transition-all inline-block">
               Pełna Lista Opinii na FB
-            </motion.a>
-          </motion.div>
+            </a>
+          </div>
         </section>
 
-        {/* Contact & Map Section */}
+        {/* Contact */}
         <section id="kontakt" className="py-24 bg-white">
           <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
             <div>
@@ -401,16 +324,6 @@ export default function App() {
                   <a href="mailto:lazurr44@wp.pl" className="text-lg font-serif hover:text-wood-accent transition-colors">lazurr44@wp.pl</a>
                 </div>
               </div>
-
-              <div className="mt-16 bg-paper p-8 rounded-2xl border border-stone-tan">
-                <p className="text-sm italic text-dusty-text mb-6">"Chętnie odpowiemy na wszystkie Państwa pytania i pomożemy zaplanować idealne wydarzenie."</p>
-                <a 
-                  href="https://www.facebook.com/KarczmaRzadzaRustykalnaSalaBankietowa" 
-                  className="flex items-center gap-3 text-wood-dark font-bold uppercase tracking-wider text-xs hover:text-wood-accent transition-all"
-                >
-                  <Facebook size={20} /> Obserwuj nas na Facebooku
-                </a>
-              </div>
             </div>
 
             <div className="h-[550px] rounded-3xl overflow-hidden border border-stone-tan elegant-shadow bg-paper">
@@ -428,25 +341,23 @@ export default function App() {
         </section>
       </main>
 
-      {/* Footer Bar */}
+      {/* Footer */}
       <footer className="py-12 bg-wood-dark text-stone-tan wood-texture">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8 border-t border-white/5 pt-12">
           <div className="flex items-center gap-3">
-            <img src={LOGO} alt="Logo" className="w-8 h-8 rounded-full border border-stone-tan/30" />
+            <img src={getPath(content.logo)} alt="Logo" className="w-8 h-8 rounded-full border border-stone-tan/30" />
             <span className="text-xs font-bold uppercase tracking-[0.2em] text-white">Karczma Rzadza</span>
           </div>
-          
           <div className="text-[10px] uppercase tracking-[0.3em] font-medium text-center opacity-60">
             © {new Date().getFullYear()} Karczma Rządza — Wszystkie prawa zastrzeżone
           </div>
-
           <div className="text-[9px] uppercase tracking-[0.2em] opacity-40 font-bold">
-            Projektowana Dla Wyjątkowych Chwil • Kraszew Stary
+            Projektowana Dla Wyjątkowych Chwil
           </div>
         </div>
       </footer>
 
-      {/* Lightbox / Zoom Modal */}
+      {/* Lightbox */}
       <AnimatePresence>
         {selectedImage && (
           <motion.div
@@ -472,14 +383,6 @@ export default function App() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Floating Action Button for Mobile */}
-      <a 
-        href="tel:504543330" 
-        className="md:hidden fixed bottom-6 right-6 z-50 bg-wood-accent text-white p-4 rounded-full shadow-2xl shadow-wood-accent/40 hover:scale-110 active:scale-95 transition-transform"
-      >
-        <Phone size={24} />
-      </a>
       
       <style>{`
         @keyframes subtle-zoom {
