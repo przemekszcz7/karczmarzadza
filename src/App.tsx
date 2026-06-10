@@ -18,15 +18,15 @@ import {
 import { useState, useEffect } from 'react';
 
 const IMAGES = [
-  "https://i.ibb.co/ZRnFm2Wy/494213384-1265600152237671-3711941915852840053-n.jpg",
-  "https://i.ibb.co/VGmCBx4/491367713-1260876702710016-7368715875963203843-n.jpg",
-  "https://i.ibb.co/v4N3wrgM/493998012-1262536142544072-7576016324617655876-n.jpg",
-  "https://i.ibb.co/1Y6VbPHN/492936302-1262536179210735-2661544604999763810-n.jpg",
-  "https://i.ibb.co/wN12qz3N/493087667-1262536169210736-4721242549837587056-n.jpg",
-  "https://i.ibb.co/B52rSLj7/494108294-1262536185877401-3150602816104922614-n.jpg",
+  "/images/gallery1.jpg",
+  "/images/gallery2.jpg",
+  "/images/gallery3.jpg",
+  "/images/gallery4.jpg",
+  "/images/gallery5.jpg",
+  "/images/gallery6.jpg",
 ];
 
-const LOGO = "https://i.ibb.co/Q31kWLJn/458318429-1068413095289712-2435864125055337775-n.jpg";
+const LOGO = "/images/logo.jpg";
 
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
