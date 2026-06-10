@@ -1,0 +1,55 @@
+# Use DecapBridge PKCE auth (required)
+backend:
+  name: git-gateway
+  repo: przemekszcz7/karczmarzadza
+  branch: main
+  auth_type: pkce
+  base_url: https://auth.decapbridge.com
+  auth_endpoint: /sites/548343dc-abfa-4d33-9b7b-983d6b7774e7/pkce
+  auth_token_endpoint: /sites/548343dc-abfa-4d33-9b7b-983d6b7774e7/token
+  gateway_url: https://gateway.decapbridge.com
+
+# Media paths calibrated for Vite asset pipeline
+media_folder: "public/images"
+public_folder: "/images"
+
+# Logo and site adjustments
+logo_url: https://decapbridge.com/decapcms-with-bridge.svg
+site_url: https://karczmarzadzarustykalnasalabankietowa.pl
+
+collections:
+  - name: "content"
+    label: "Edycja Strony"
+    delete: false # Prevents accidental file deletion
+    files:
+      - file: "public/content/homepage.json"
+        label: "Strona Główna (Homepage)"
+        name: "homepage"
+        fields:
+          - { label: "Logo Firmy", name: "logo", widget: "image" }
+
+          - label: "Sekcja Główna (Hero)"
+            name: "hero_section"
+            widget: "object"
+            fields:
+              - { label: "Główne tło (Zdjęcie)", name: "hero_image", widget: "image" }
+              - { label: "Nagłówek Główny", name: "hero_title", widget: "string" }
+              - { label: "Podtytuł", name: "hero_subtitle", widget: "string" }
+              - { label: "Krótki Opis", name: "hero_description", widget: "text" }
+
+          - label: "Sekcja O Nas",
+            name: "about_section"
+            widget: "object"
+            fields:
+              - { label: "Zdjęcie Sekcji O Nas", name: "about_image", widget: "image" }
+              - { label: "Tytuł Sekcji O Nas", name: "about_title", widget: "string" }
+              - { label: "Treść Opisu", name: "about_description", widget: "text" }
+
+          - label: "Dolna Galeria Detali"
+            name: "gallery_section"
+            widget: "object"
+            fields:
+              - label: "Zdjęcia w Galerii (Wymagane dokładnie 4 zdjęcia)",
+                name: "gallery_images",
+                widget: "list",
+                field: { label: "Zdjęcie", widget: "image" }
