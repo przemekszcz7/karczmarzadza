@@ -12,11 +12,12 @@ import {
   Star, 
   ChevronRight, 
   Menu, 
-  X
+  X,
+  ExternalLink
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
-// Default Fallbacks matching your original rustic content configuration
+// Default values that show up if the CMS file is still loading
 const DEFAULT_CONTENT = {
   logo: "/images/logo.jpg",
   hero_image: "/images/1.jpg",
@@ -38,10 +39,13 @@ export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  
+  // This state holds the live data from Decap CMS
   const [content, setContent] = useState(DEFAULT_CONTENT);
 
-  // Dynamic Runtime Asset Resolution mapping to Vite or Subdirectories
+  // Helper to make sure paths work on both local server and GitHub Pages subfolders
   const getPath = (pathString: string) => {
+    if (!pathString) return '';
     const clean = pathString.startsWith('/') ? pathString.slice(1) : pathString;
     const baseUrl = import.meta.env.BASE_URL || '/';
     return `${baseUrl}${baseUrl.endsWith('/') ? '' : '/'}${clean}`;
@@ -51,26 +55,32 @@ export default function App() {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
 
-    // Fetch dynamic JSON written by Decap CMS at runtime
-    fetch(`${import.meta.env.BASE_URL || '/'}content/homepage.json`)
+    // CRITICAL FIX: Fetch the live CMS file from the public directory
+    const baseUrl = import.meta.env.BASE_URL || '/';
+    const jsonPath = `${baseUrl}${baseUrl.endsWith('/') ? '' : '/'}content/homepage.json`;
+
+    fetch(jsonPath)
       .then((res) => {
-        if (!res.ok) throw new Error("No dynamic content configuration JSON found");
+        if (!res.ok) throw new Error("CMS JSON file not found or not deployed yet");
         return res.json();
       })
       .then((data) => {
+        // Map the JSON structure perfectly to our state
         setContent({
           logo: data.logo || DEFAULT_CONTENT.logo,
-          hero_image: data.hero_image || DEFAULT_CONTENT.hero_image,
-          hero_title: data.hero_title || DEFAULT_CONTENT.hero_title,
-          hero_subtitle: data.hero_subtitle || DEFAULT_CONTENT.hero_subtitle,
-          hero_description: data.hero_description || DEFAULT_CONTENT.hero_description,
-          about_image: data.about_image || DEFAULT_CONTENT.about_image,
-          about_title: data.about_title || DEFAULT_CONTENT.about_title,
-          about_description: data.about_description || DEFAULT_CONTENT.about_description,
-          gallery_images: Array.isArray(data.gallery_images) ? data.gallery_images : DEFAULT_CONTENT.gallery_images
+          hero_image: data.hero_section?.hero_image || DEFAULT_CONTENT.hero_image,
+          hero_title: data.hero_section?.hero_title || DEFAULT_CONTENT.hero_title,
+          hero_subtitle: data.hero_section?.hero_subtitle || DEFAULT_CONTENT.hero_subtitle,
+          hero_description: data.hero_section?.hero_description || DEFAULT_CONTENT.hero_description,
+          about_image: data.about_section?.about_image || DEFAULT_CONTENT.about_image,
+          about_title: data.about_section?.about_title || DEFAULT_CONTENT.about_title,
+          about_description: data.about_section?.about_description || DEFAULT_CONTENT.about_description,
+          gallery_images: data.gallery_section?.gallery_images && Array.isArray(data.gallery_section.gallery_images)
+            ? data.gallery_section.gallery_images.map((item: any) => typeof item === 'object' ? item.image : item)
+            : DEFAULT_CONTENT.gallery_images
         });
       })
-      .catch((err) => console.log("Using static content defaults:", err));
+      .catch((err) => console.warn("Falling back to static defaults:", err));
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -328,7 +338,7 @@ export default function App() {
 
             <div className="h-[550px] rounded-3xl overflow-hidden border border-stone-tan elegant-shadow bg-paper">
               <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2434.3473893437836!2d21.268668612876176!3d52.40037997191343!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x471edb5ab30aaabf%3A0xc6f41acb80b1c224!2sKARCZMA%20RZ%C4%84DZA!5e0!3m2!1spl!2spl!4v1777096628733!5m2!1spl!2spl" 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2433.647573038676!2d21.272186977112002!3d52.40398494447385!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x471ec3cb2fe186e7%3A0xb367a73fc42d9972!2sKarczma%20Rz%C4%85dza!5e0!3m2!1spl!2spl!4v1710000000000!5m2!1spl!2spl" 
                 width="100%" 
                 height="100%" 
                 style={{ border: 0 }} 
@@ -342,57 +352,4 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="py-12 bg-wood-dark text-stone-tan wood-texture">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8 border-t border-white/5 pt-12">
-          <div className="flex items-center gap-3">
-            <img src={getPath(content.logo)} alt="Logo" className="w-8 h-8 rounded-full border border-stone-tan/30" />
-            <span className="text-xs font-bold uppercase tracking-[0.2em] text-white">Karczma Rzadza</span>
-          </div>
-          <div className="text-[10px] uppercase tracking-[0.3em] font-medium text-center opacity-60">
-            © {new Date().getFullYear()} Karczma Rządza — Wszystkie prawa zastrzeżone
-          </div>
-          <div className="text-[9px] uppercase tracking-[0.2em] opacity-40 font-bold">
-            Projektowana Dla Wyjątkowych Chwil
-          </div>
-        </div>
-      </footer>
-
-      {/* Lightbox */}
-      <AnimatePresence>
-        {selectedImage && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setSelectedImage(null)}
-            className="fixed inset-0 z-[100] bg-wood-dark/95 backdrop-blur-sm flex items-center justify-center p-4 md:p-10 cursor-zoom-out"
-          >
-            <button 
-              onClick={(e) => { e.stopPropagation(); setSelectedImage(null); }}
-              className="absolute top-6 right-6 text-white hover:text-wood-accent transition-colors z-[110] p-2"
-            >
-              <X size={40} />
-            </button>
-            <motion.img
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              src={selectedImage}
-              alt="Powiększone zdjęcie"
-              className="max-w-full max-h-full object-contain shadow-2xl rounded-lg"
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-      
-      <style>{`
-        @keyframes subtle-zoom {
-          0% { transform: scale(1.05); }
-          100% { transform: scale(1.15); }
-        }
-        .animate-subtle-zoom {
-          animation: subtle-zoom 20s infinite alternate ease-in-out;
-        }
-      `}</style>
-    </div>
-  );
-}
+      <footer className="py-12 bg-wood
