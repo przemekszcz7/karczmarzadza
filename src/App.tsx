@@ -7,13 +7,24 @@ export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const { content, getPath } = useCMS();
+  const { content, getPath, isLoading } = useCMS();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Block rendering until data is completely downloaded to eliminate the flash
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-paper flex items-center justify-center">
+        <div className="text-center">
+          <p className="font-serif italic text-wood-dark text-xl animate-pulse">Ładowanie...</p>
+        </div>
+      </div>
+    );
+  }
 
   const navLinks = [
     { name: 'O nas', href: '#o-nas' },
@@ -155,7 +166,7 @@ export default function App() {
               </div>
             </div>
             <div className="h-[400px] rounded-3xl overflow-hidden border border-stone-tan bg-paper">
-              <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2433.235948943801!2d21.31952327708575!3d52.40232434509176!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x471ecb19ef01dd1b%3A0x6335123d5789fcfc!2sKarczma%20Rz%C4%85dza%20-%20Sala%20Bankietowa!5e0!3m2!1spl!2spl!4v1710000000000!5m2!1spl!2spl" width="100%" height="100%" style={{ border: 0 }} allowFullScreen loading="lazy" title="Mapa" />
+              <iframe src="http://googleusercontent.com/maps.google.com/5" width="100%" height="100%" style={{ border: 0 }} allowFullScreen loading="lazy" title="Mapa" />
             </div>
           </div>
         </section>
