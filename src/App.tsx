@@ -153,20 +153,46 @@ export default function App() {
         <section id="kontakt" className="py-24 bg-white">
           <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
             <div>
+              <span className="text-[10px] uppercase font-bold tracking-[0.3em] text-wood-accent mb-4 block">Kontakt</span>
               <h2 className="text-5xl font-serif text-wood-dark font-bold italic mb-8">Zapraszamy do Rezerwacji</h2>
-              <div className="space-y-8">
+              
+              <div className="space-y-8 pt-8">
                 <div className="flex items-center gap-6 pb-6 border-b border-stone-tan">
                   <span className="text-wood-accent"><MapPin size={24} /></span>
                   <p className="text-lg font-serif">ul. Nad Rzadzą 30, Kraszew Stary 05-205</p>
                 </div>
                 <div className="flex items-center gap-6 pb-6 border-b border-stone-tan">
                   <span className="text-wood-accent"><Phone size={24} /></span>
-                  <a href="tel:504543330" className="text-lg font-serif">+48 504 543 330</a>
+                  <a href="tel:504543330" className="text-lg font-serif hover:text-wood-accent transition-colors">+48 504 543 330</a>
+                </div>
+                <div className="flex items-center gap-6">
+                  <span className="text-wood-accent"><Mail size={24} /></span>
+                  <a href="mailto:lazurr44@wp.pl" className="text-lg font-serif hover:text-wood-accent transition-colors">lazurr44@wp.pl</a>
                 </div>
               </div>
+
+              <div className="mt-16 bg-paper p-8 rounded-2xl border border-stone-tan">
+                <p className="text-sm italic text-dusty-text mb-6">"Chętnie odpowiemy na wszystkie Państwa pytania i pomożemy zaplanować idealne wydarzenie."</p>
+                <a 
+                  href="https://www.facebook.com/KarczmaRzadzaRustykalnaSalaBankietowa" 
+                  className="flex items-center gap-3 text-wood-dark font-bold uppercase tracking-wider text-xs hover:text-wood-accent transition-all"
+                >
+                  <Facebook size={20} /> Obserwuj nas na Facebooku
+                </a>
+              </div>
             </div>
-            <div className="h-[400px] rounded-3xl overflow-hidden border border-stone-tan bg-paper">
-              <iframe src="http://googleusercontent.com/maps.google.com/5" width="100%" height="100%" style={{ border: 0 }} allowFullScreen loading="lazy" title="Mapa" />
+
+            <div className="h-[550px] rounded-3xl overflow-hidden border border-stone-tan elegant-shadow bg-paper">
+              <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2434.34720876402!2d21.268668612682635!3d52.400383244961525!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x471edb5ab30aaabf%3A0xc6f41acb80b1c224!2sKARCZMA%20RZ%C4%84DZA!5e0!3m2!1spl!2spl!4v1781862748096!5m2!1spl!2spl" 
+                width="100%" 
+                height="100%" 
+                style={{ border: 0 }} 
+                allowFullScreen={true} 
+                loading="lazy" 
+                title="Mapa dojazdu"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
             </div>
           </div>
         </section>
